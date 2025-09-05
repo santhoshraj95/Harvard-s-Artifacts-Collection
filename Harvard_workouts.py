@@ -16,15 +16,15 @@ def fetch_classifications():
         data_class.extend(records)
     return pd.DataFrame(data_class)
 
-def fetch_objects_by_classification(classification, pages=3):
+def fetch_objects_by_classification(classification):
     selected_objects = []
-    for i in range(1, pages + 1):
+    for page in range(1, 26):
         response = requests.get(
             "https://api.harvardartmuseums.org/object",
             params={
                 "apikey": "9aed1d07-9679-4018-84eb-f13f236d9be6",
                 "classification": classification,
-                "page": i,
+                "page": page,
                 "size": 100
             }
         )
@@ -343,7 +343,7 @@ if st.button("📥 Fetch Artifacts"):
     with st.spinner("⏳ Fetching artifacts from Harvard API..."):
         if loading_anim:
             st_lottie(loading_anim, height=120)
-        artifacts = fetch_objects_by_classification(selected_classification, pages=3)
+        artifacts = fetch_objects_by_classification(selected_classification)
         st.session_state["fetched_data"] = artifacts
         st.success(f"✅ {len(artifacts)} records fetched for '{selected_classification}'")
         st.write("📝 Sample Record:")
@@ -420,3 +420,4 @@ with query_tabs[1]:
             st.dataframe(result_df, use_container_width=True)
         except Exception as e:
             st.error(f"❌ Error running custom query:\n{e}")
+
